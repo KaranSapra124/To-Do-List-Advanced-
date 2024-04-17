@@ -7,7 +7,7 @@ const btn = document.getElementById("btn");
 const TaskBox = document.getElementById("TaskBox");
 const alertBox = document.getElementById("alertBox");
 
-const arr = [];
+var arr = [];
 
 //CREATE
 btn.addEventListener("click", function () {
@@ -50,71 +50,98 @@ btn.addEventListener("click", function () {
 </div>
     `;
     arr.push(txtinpt.value);
-    displayToDo(arr);
-    txtinpt.value = "";
+    if (localStorage.getItem("arr")) {
+      // console.log("I am here");
+      const parsedArr = JSON.parse(localStorage.getItem("arr"));
+      parsedArr.push(txtinpt.value);
+      displayToDo(parsedArr);
+      localStorage.setItem("arr", JSON.stringify(parsedArr));
+    } else {
+      localStorage.setItem("arr", JSON.stringify(arr));
+      // console.log(typeof(arr))
+      displayToDo(arr);
+      txtinpt.value = "";
+    }
   }
 });
 
 // READ
-function displayToDo(task) {
-  TaskBox.innerHTML = "";
-  for (let i = 0; i < task.length; i++) {
-    TaskBox.innerHTML += `
+const displayToDo = function (task) {
+  if (task == null) {
+    TaskBox.innerHTML = `
+    <div class="border bg-gray-400 rounded p-2 w-fit font-semibold text-xl text-center m-auto">
 
-        <li class="p-2 rounded-lg">
-           <div class="flex align-middle flex-row justify-between">
-             <div class="p-2">
-               <input type="checkbox" class="h-6 w-6" value="true"  />
-             </div>
-             <div class="p-2">
-               <p class="text-lg  text-gray-400">${task[i]}</p>
-             </div>
-             <button
-               class="flex text-red-500 border-2 border-red-500 p-2 rounded-lg"
-             >
-               <svg
-                 class="h-6 w-6 text-red-500"
-                 viewBox="0 0 24 24"
-                 fill="none"
-                 stroke="currentColor"
-                 stroke-width="2"
-                 stroke-linecap="round"
-                 stroke-linejoin="round"
+<h4>Kindly Add Some Tasks</h4>
+    </div>
+    
+    `;
+  } else {
+    TaskBox.innerHTML = "";
+    for (let i = 0; i < task?.length; i++) {
+      TaskBox.innerHTML += `
+  
+          <li class="p-2 rounded-lg">
+             <div class="flex align-middle flex-row justify-between">
+               <div class="p-2">
+                 <input type="checkbox" class="h-6 w-6" value="true"  />
+               </div>
+               <div class="p-2">
+                 <p class="text-lg  text-gray-400">${task[i]}</p>  
+               </div>
+               <button onclick="updateTask('${task[i]}',${i})" class="text-green-800 border-2 border-green-800 rounded-xl p-2" >
+               Update
+               
+  
+               </button>
+               <button
+                 class="flex text-red-500 border-2 border-red-500 p-2 rounded-lg"
                >
-                 <circle cx="12" cy="12" r="10" />
-                 <line x1="15" y1="9" x2="9" y2="15" />
-                 <line x1="9" y1="9" x2="15" y2="15" />
-               </svg>
-               <span>Remove</span>
-             </button>
-           </div>
-           <hr class="mt-2" />
-         </li>
-           `;
+                 <svg
+                   class="h-6 w-6 text-red-500"
+                   viewBox="0 0 24 24"
+                   fill="none"
+                   stroke="currentColor"
+                   stroke-width="2"
+                   stroke-linecap="round"
+                   stroke-linejoin="round"
+                 >
+                   <circle cx="12" cy="12" r="10" />
+                   <line x1="15" y1="9" x2="9" y2="15" />
+                   <line x1="9" y1="9" x2="15" y2="15" />
+                 </svg>
+                 <span onclick="deleteTask(${i})">Remove</span>
+               </button>
+             </div>
+             <hr class="mt-2" />
+           </li>
+             `;
+    }
   }
+};
+
+// UPDATE
+function updateTask(elem, index) {
+  let updatedVal = prompt("Enter the updated value..", elem);
+  arr.splice(index, 1, updatedVal);
+  displayToDo(arr);
+}
+
+//DELETE
+function deleteTask(index) {
+  arr.splice(index, 1);
+  displayToDo(arr);
 }
 
 function Hide() {
   alertBox.innerHTML = "";
 }
 
-// Arrays
+window.addEventListener("load", function () {
+  const parsedArr = JSON.parse(localStorage.getItem("arr"));
+  displayToDo(parsedArr);
+});
 
-// ["Plate 1", "Plate 2"];
+// Update function
 
-// counting 0 start
-// const arr = [1, "ODD", 2, "Even", 3, "Odd", 4, "Even"];
-// // // console.log(arr);
-
-// // for (let i = 0; i < arr.length; i++) {
-// //   console.log(arr[i]);
-// // }
-
-// arr.push(5);
-// console.log(arr)
-// arr.pop()
-// console.log(arr)
-
-// Home1 and Home2
-// bridge
-// Home1
+// Update button clicks , prompt pop up ho , exisiting value , updated value , variable in which I am storing prompt value , array , in which I have tasks , splice
+// 3 arguments , start number (index) , delet count (1),updated value (elem),displayTodo()
