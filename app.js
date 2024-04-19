@@ -121,15 +121,19 @@ const displayToDo = function (task) {
 
 // UPDATE
 function updateTask(elem, index) {
+  const parsedArr = JSON.parse(localStorage.getItem("arr"));
   let updatedVal = prompt("Enter the updated value..", elem);
-  arr.splice(index, 1, updatedVal);
-  displayToDo(arr);
+  parsedArr.splice(index, 1, updatedVal);
+  displayToDo(parsedArr);
+  localStorage.setItem("arr", JSON.stringify(parsedArr));
 }
 
 //DELETE
 function deleteTask(index) {
-  arr.splice(index, 1);
-  displayToDo(arr);
+  const parsedArr = JSON.parse(localStorage.getItem("arr"));
+  parsedArr.splice(index, 1);
+  displayToDo(parsedArr);
+  localStorage.setItem("arr", JSON.stringify(parsedArr));
 }
 
 function Hide() {
